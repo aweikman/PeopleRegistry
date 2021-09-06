@@ -10,6 +10,7 @@ import mvc.screens.MainController;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class  AppMain extends Application {
@@ -29,9 +30,9 @@ public class  AppMain extends Application {
         super.init();
         LOGGER.info("in init");
         people = new ArrayList<>();
-        people.add(new Person("Bob Dole", 10));
-        people.add(new Person("Tom Jerry", 5));
-        people.add(new Person("Susie Que", 7));
+        people.add(new Person(10, "Bob", "dole", 27));
+        people.add(new Person(12, "Tom", "jerry", 27));
+        people.add(new Person(11, "Old","yeller",  27));
     }
 
     @Override

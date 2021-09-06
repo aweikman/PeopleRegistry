@@ -46,7 +46,7 @@ public class PersonListController implements Initializable {
 
         // load the person detail with an empty person
         // call the main controller switch view method
-        MainController.getInstance().switchView(ScreenType.PERSONDETAIL, new Person("", 0));
+        MainController.getInstance().switchView(ScreenType.PERSONDETAIL, new Person(0, "", "",0));
     }
 
     @FXML

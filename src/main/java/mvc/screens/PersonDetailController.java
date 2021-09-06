@@ -9,16 +9,26 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class PersonDetailController implements Initializable {
     private static final Logger LOGGER = LogManager.getLogger();
 
     @FXML
-    private TextField personName;
+    private TextField personFirstName;
+
+    @FXML
+    private TextField personLastName;
+
+    @FXML
+    private TextField personDateofBirth;
 
     @FXML
     private TextField personAge;
+
+    @FXML
+    private TextField personId;
 
     private Person person;
 
@@ -34,11 +44,19 @@ public class PersonDetailController implements Initializable {
 
     @FXML
     void save(ActionEvent event) {
-//        LOGGER.info("Save clicked");
+//        if(person.) {
+//            LOGGER.info("CREATING");
+//        }
+//        else
+//        {
+//            LOGGER.info("UPDATING");
+//        }
 
         // TODO: validate text fields FIRST before you save them to model
-        person.setPersonName(personName.getText());
 
+        person.setId(Integer.parseInt(personId.getText()));
+        person.setPersonFirstName(personFirstName.getText());
+        person.setPersonLastName(personLastName.getText());
         try {
             person.setAge(Integer.parseInt(personAge.getText()));
         } catch(NumberFormatException e) {
@@ -59,7 +77,10 @@ public class PersonDetailController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         // this is where we connect the model data to the GUI components like textfields
-        personName.setText(person.getPersonName());
+        personId.setText("" +person.getId());
+        personFirstName.setText(person.getPersonFirstName());
+        personLastName.setText(person.getPersonLastName());
+//        personDateofBirth.setText(person.getDateofBirth);
         personAge.setText("" + person.getAge());
     }
 
