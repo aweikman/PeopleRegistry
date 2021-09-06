@@ -25,10 +25,21 @@ public class MainController implements Initializable {
 
     public void switchView(ScreenType screenType, Object... args) {
         switch (screenType) {
-            case PERSONLIST:
-                FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/person_list.fxml"));
-                loader.setController(new PersonListController(people));
+            case LOGIN:
+                FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/login.fxml"));
+                loader.setController(new LoginController());
                 Parent rootNode = null;
+                try {
+                    rootNode = loader.load();
+                    rootPane.setCenter(rootNode);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case PERSONLIST:
+                loader = new FXMLLoader(this.getClass().getResource("/person_list.fxml"));
+                loader.setController(new PersonListController(people));
+                rootNode = null;
                 try {
                     rootNode = loader.load();
                     rootPane.setCenter(rootNode);
@@ -56,7 +67,7 @@ public class MainController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        switchView(ScreenType.PERSONLIST);
+        switchView(ScreenType.LOGIN);
     }
 
     public static MainController getInstance() {
