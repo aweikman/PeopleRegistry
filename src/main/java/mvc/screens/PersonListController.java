@@ -52,7 +52,7 @@ public class PersonListController implements Initializable {
 
     @FXML
     void deletePerson(ActionEvent event) {
-        LOGGER.info("DELETING");
+        LOGGER.info("DELETING " + personList.getSelectionModel().getSelectedItem().toString());
 
     }
 
