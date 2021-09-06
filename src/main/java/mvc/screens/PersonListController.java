@@ -13,6 +13,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.net.URL;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
@@ -46,7 +47,7 @@ public class PersonListController implements Initializable {
 
         // load the person detail with an empty person
         // call the main controller switch view method
-        MainController.getInstance().switchView(ScreenType.PERSONDETAIL, new Person(0, "", "",0));
+        MainController.getInstance().switchView(ScreenType.PERSONDETAIL, new Person(0, "", "", LocalDate.of(1999, 1, 1), 0));
     }
 
     @FXML

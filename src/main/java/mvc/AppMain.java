@@ -30,9 +30,9 @@ public class  AppMain extends Application {
         super.init();
         LOGGER.info("in init");
         people = new ArrayList<>();
-        people.add(new Person(10, "Bob", "dole", 27));
-        people.add(new Person(12, "Tom", "jerry", 27));
-        people.add(new Person(11, "Old","yeller",  27));
+        people.add(new Person(10, "Bob", "dole", LocalDate.of(1993, 2, 19), 27));
+        people.add(new Person(12, "Tom", "jerry", LocalDate.of(1993, 2, 19),27));
+        people.add(new Person(11, "Old","yeller", LocalDate.of(1993, 2, 19),27));
     }
 
     @Override

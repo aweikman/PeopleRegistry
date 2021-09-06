@@ -9,6 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.net.URL;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
@@ -55,6 +56,7 @@ public class PersonDetailController implements Initializable {
         // TODO: validate text fields FIRST before you save them to model
 
         person.setId(Integer.parseInt(personId.getText()));
+        person.setDateOfBirth(LocalDate.parse(personDateofBirth.getText()));
         person.setPersonFirstName(personFirstName.getText());
         person.setPersonLastName(personLastName.getText());
         try {
@@ -80,7 +82,7 @@ public class PersonDetailController implements Initializable {
         personId.setText("" +person.getId());
         personFirstName.setText(person.getPersonFirstName());
         personLastName.setText(person.getPersonLastName());
-//        personDateofBirth.setText(person.getDateofBirth);
+        personDateofBirth.setText(String.valueOf(person.getDateOfBirth()));
         personAge.setText("" + person.getAge());
     }
 

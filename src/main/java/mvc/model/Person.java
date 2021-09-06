@@ -6,14 +6,14 @@ public class Person {
     private int id;
     private String personFirstName;
     private String personLastName;
-//    private LocalDate dateOfBirth;
+    private LocalDate dateOfBirth;
     private int age;
 
-    public Person(int id, String personFirstName, String personLastName, /* dateOfBirth,*/ int age) {
+    public Person(int id, String personFirstName, String personLastName,  LocalDate dateOfBirth, int age) {
         this.id = id;
         this.personFirstName = personFirstName;
         this.personLastName = personLastName;
-//        this.dateOfBirth = dateOfBirth;
+        this.dateOfBirth = dateOfBirth;
         this.age = age;
     }
 
@@ -21,7 +21,7 @@ public class Person {
 
     @Override
     public String toString() {
-        return getId() + " " + getPersonFirstName() + " " + getPersonLastName() + " " + getAge();
+        return getId() + " " + getPersonFirstName() + " " + getPersonLastName() + " " + getDateOfBirth() + " " + getAge();
     }
 
 
@@ -48,8 +48,8 @@ public class Person {
         this.personLastName = personLastName;
     }
 
-//    public LocalDate getDateOfBirth() { return dateOfBirth; }
-//    public void setDateOfBirth(LocalDate dateOfBirth) { this.dateOfBirth = dateOfBirth; }
+    public LocalDate getDateOfBirth() { return dateOfBirth; }
+    public void setDateOfBirth(LocalDate dateOfBirth) { this.dateOfBirth = dateOfBirth; }
 
     public int getAge() {
         return age;
