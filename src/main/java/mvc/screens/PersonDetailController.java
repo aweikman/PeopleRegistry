@@ -45,20 +45,20 @@ public class PersonDetailController implements Initializable {
 
     @FXML
     void save(ActionEvent event) {
-//        if(person.) {
-//            LOGGER.info("CREATING");
-//        }
-//        else
-//        {
-//            LOGGER.info("UPDATING");
-//        }
+        if(person.getId() == 0) {
+            LOGGER.info("CREATING");
+        }
+        else
+        {
+            LOGGER.info("UPDATING");
+        }
 
         // TODO: validate text fields FIRST before you save them to model
-
         person.setId(Integer.parseInt(personId.getText()));
         person.setDateOfBirth(LocalDate.parse(personDateofBirth.getText()));
         person.setPersonFirstName(personFirstName.getText());
         person.setPersonLastName(personLastName.getText());
+
         try {
             person.setAge(Integer.parseInt(personAge.getText()));
         } catch(NumberFormatException e) {
