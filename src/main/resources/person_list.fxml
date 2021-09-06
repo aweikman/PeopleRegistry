@@ -15,7 +15,7 @@
       <FlowPane hgap="10.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
             <Button mnemonicParsing="false" onAction="#addPerson" text="Add Person" />
-            <Button mnemonicParsing="false" text="Delete Person" />
+            <Button mnemonicParsing="false" onAction="#deletePerson" text="Delete Person" />
          </children>
          <padding>
             <Insets top="5.0" />

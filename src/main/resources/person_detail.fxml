@@ -25,7 +25,7 @@
       <FlowPane alignment="CENTER_LEFT" hgap="5.0" prefHeight="43.0" prefWidth="141.0" GridPane.rowIndex="2">
          <children>
             <Button mnemonicParsing="false" onAction="#save" text="Save" />
-            <Button mnemonicParsing="false" onAction="#cancelSave" text="Cancel" />
+            <Button mnemonicParsing="false" onAction="#cancel" text="Cancel" />
          </children>
       </FlowPane>
       <TextField fx:id="personName" promptText="Enter person name" GridPane.columnIndex="1" />

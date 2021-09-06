@@ -27,16 +27,18 @@ public class PersonDetailController implements Initializable {
     }
 
     @FXML
-    void cancelSave(ActionEvent event) {
-        LOGGER.info("Cancel clicked");
+    void cancel(ActionEvent event) {
+        LOGGER.info("CANCEL");
+        MainController.getInstance().switchView(ScreenType.PERSONLIST);
     }
 
     @FXML
     void save(ActionEvent event) {
-        LOGGER.info("Save clicked");
+//        LOGGER.info("Save clicked");
 
         // TODO: validate text fields FIRST before you save them to model
         person.setPersonName(personName.getText());
+
         try {
             person.setAge(Integer.parseInt(personAge.getText()));
         } catch(NumberFormatException e) {

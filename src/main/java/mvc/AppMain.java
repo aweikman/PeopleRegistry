@@ -30,8 +30,8 @@ public class  AppMain extends Application {
         LOGGER.info("in init");
         people = new ArrayList<>();
         people.add(new Person("Bob Dole", 10));
-        people.add(new Person("Tom", 5));
-        people.add(new Person("Sally", 7));
+        people.add(new Person("Tom Jerry", 5));
+        people.add(new Person("Susie Que", 7));
     }
 
     @Override
