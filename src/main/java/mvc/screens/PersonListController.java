@@ -52,8 +52,13 @@ public class PersonListController implements Initializable {
 
     @FXML
     void deletePerson(ActionEvent event) {
-        LOGGER.info("DELETING " + personList.getSelectionModel().getSelectedItem().toString());
-
+        if (personList.getSelectionModel().getSelectedItem() != null) {
+            LOGGER.info("DELETING " + personList.getSelectionModel().getSelectedItem().getPersonFirstName() + " " + personList.getSelectionModel().getSelectedItem().getPersonLastName());
+        }
+        else
+        {
+            LOGGER.info("ITEM NOT SELECTED");
+        }
     }
 
     @Override
