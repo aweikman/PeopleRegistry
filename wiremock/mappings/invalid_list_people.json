@@ -1,10 +1,10 @@
 {
   "request": {
     "method": "GET",
-    "url": "/dogs",
+    "url": "/people",
     "headers" : {
       "Authorization" : {
-        "contains" : "i am a sesh token"
+        "contains" : "bad session token"
       }
     }
   },

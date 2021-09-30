@@ -1,0 +1,18 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/people",
+    "headers" : {
+      "Authorization" : {
+        "contains" : "i am a session token"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "body": "[{\"id\":1,\"person_first_name\":\"Spot\",\"person_last_name\":\"Spottington\",\"dob\":\"1993-02-19\",\"age\":28},{\"id\":1,\"person_first_name\":\"Ol\",\"person_last_name\":\"Yeller\",\"dob\":\"1993-02-19\",\"age\":28},{\"id\":1,\"person_first_name\":\"Sam\",\"person_last_name\":\"Wise\",\"dob\":\"1993-02-19\",\"age\":28}]",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

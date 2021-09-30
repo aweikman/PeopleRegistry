@@ -1,4 +1,4 @@
-package login.screens;
+package mvc.screens;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -6,12 +6,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.layout.BorderPane;
 import login.gateway.PersonGateway;
-import login.gateway.Session;
+import login.gateway.SessionGateway;
+import login.screens.LoginController;
 import mvc.model.Person;
-import mvc.screens.PersonDetailController;
-import mvc.screens.PersonListController;
-import mvc.screens.MyController;
-import mvc.screens.ScreenType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -25,7 +22,7 @@ public class MainController implements Initializable {
 
     private static MainController instance = null;
 
-    private Session session;
+    private SessionGateway session;
 
     private PersonGateway personGateway;
 
@@ -87,11 +84,11 @@ public class MainController implements Initializable {
 
     // accessors
 
-    public Session getSession() {
+    public SessionGateway getSession() {
         return session;
     }
 
-    public void setSession(Session session) {
+    public void setSession(SessionGateway session) {
         this.session = session;
     }
 

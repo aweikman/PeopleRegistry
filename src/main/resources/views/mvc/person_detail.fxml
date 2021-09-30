@@ -35,7 +35,7 @@
       <TextField fx:id="personAge" promptText="Enter age" GridPane.columnIndex="1" GridPane.rowIndex="4" />
       <TextField fx:id="personId" promptText="0" GridPane.columnIndex="1" />
       <TextField fx:id="personLastName" promptText="Enter last name" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-      <TextField fx:id="personDateofBirth" promptText="Enter date of birth" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+      <TextField fx:id="personDateOfBirth" promptText="Enter date of birth" GridPane.columnIndex="1" GridPane.rowIndex="3" />
       <Label text="ID" />
       <Label text="LastName" GridPane.rowIndex="2" />
       <Label text="Date of Birth" GridPane.rowIndex="3" />

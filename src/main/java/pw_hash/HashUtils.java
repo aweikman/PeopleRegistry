@@ -15,7 +15,7 @@ public class HashUtils {
 
             //digest() method is called to calculate message digest of the input
             //digest() return array of byte.
-            // docrob note: this is the MAGIC
+            // note: this is the MAGIC
             byte[] inputDigest = msgDigest.digest(input.getBytes());
 
             // Convert byte array into signum representation
@@ -31,7 +31,7 @@ public class HashUtils {
             }
             return hashtext;
         } catch (NoSuchAlgorithmException e) {
-            // docrob note: notice the author wrapped the checked exception in an unchecked exception
+            // note: notice the author wrapped the checked exception in an unchecked exception
             throw new RuntimeException(e);
         }
     }

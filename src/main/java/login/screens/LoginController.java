@@ -6,10 +6,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import login.gateway.SessionGateway;
+import mvc.screens.MainController;
 import myexceptions.UnauthorizedException;
 import myexceptions.UnknownException;
-import login.gateway.LoginGateway;
-import login.gateway.Session;
+import login.gateway.AuthenticationGateway;
 import mvc.screens.MyController;
 import mvc.screens.ScreenType;
 import org.apache.logging.log4j.LogManager;
@@ -37,9 +38,9 @@ public class LoginController implements Initializable, MyController {
 
         // check login with logingateway
         // login will throw an exception if it fails
-        Session session = null;
+        SessionGateway session = null;
         try {
-            session = LoginGateway.login(login, hashedPassword);
+            session = AuthenticationGateway.login(login, hashedPassword);
         } catch(UnauthorizedException e) {
             Alerts.infoAlert("Login failed!", "Either your username or your password is incorrect.");
             return;

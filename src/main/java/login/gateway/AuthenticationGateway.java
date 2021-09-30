@@ -16,10 +16,10 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-public class LoginGateway {
+public class AuthenticationGateway {
     private static final Logger LOGGER = LogManager.getLogger();
 
-    public static Session login(String userName, String password) throws UnauthorizedException {
+    public static SessionGateway login(String userName, String password) throws UnauthorizedException {
         CloseableHttpClient httpclient = null;
         CloseableHttpResponse response = null;
 
@@ -36,10 +36,6 @@ public class LoginGateway {
             StringEntity reqEntity = new StringEntity(formDataString);
             postRequest.setEntity(reqEntity);
 
-            // I don't think we need these 2 lines
-//            postRequest.setHeader("Accept", "application/json");
-//            postRequest.setHeader("Content-type", "application/json");
-
             response = httpclient.execute(postRequest);
 
             switch(response.getStatusLine().getStatusCode()) {
@@ -48,7 +44,7 @@ public class LoginGateway {
                     // use org.apache.http.util.EntityUtils to read json as string
                     String strResponse = EntityUtils.toString(entity, StandardCharsets.UTF_8);
                     EntityUtils.consume(entity);
-                    Session session = new Session(strResponse);
+                    SessionGateway session = new SessionGateway(strResponse, userName);
                     return session;
                 case 401:
                     throw new UnauthorizedException("login failed");

@@ -28,8 +28,8 @@ public class PersonGateway {
 
         try {
             String response = executeGetRequest(URL + "/people", token);
-            JSONArray dogList = new JSONArray(response);
-            for (Object person : dogList) {
+            JSONArray personList = new JSONArray(response);
+            for (Object person : personList) {
                 people.add(Person.fromJSONObject((JSONObject) person));
             }
         } catch(RuntimeException e) {
