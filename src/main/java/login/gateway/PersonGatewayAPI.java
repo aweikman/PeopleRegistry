@@ -1,5 +1,6 @@
 package login.gateway;
 
+import gateway.PersonGateway;
 import myexceptions.UnauthorizedException;
 import myexceptions.UnknownException;
 import mvc.model.Person;
@@ -17,13 +18,21 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PersonGateway {
+public class PersonGatewayAPI implements PersonGateway{
     private static final String URL = "http://localhost:8080";
 
-    public PersonGateway() {
+    private String token;
+
+    public PersonGatewayAPI()
+    {
+
     }
 
-    public List<Person> fetchPeople(String token) throws UnauthorizedException, UnknownException {
+    public PersonGatewayAPI(String token)
+    {
+        this.token = token;
+    }
+    public List<Person> fetchPeople() throws UnauthorizedException, UnknownException {
         List<Person> people = new ArrayList<>();
 
         try {
@@ -37,6 +46,21 @@ public class PersonGateway {
         }
         return people;
     }
+
+//    public void addPerson(String token){
+//        List<Person> people = fetchPeople();
+//
+//        try {
+//            String response = executeGetRequest(URL + "/people/1", token);
+//            JSONArray personList = new JSONArray(response);
+//            for (Object person : personList) {
+//                people.add(Person.fromJSONObject((JSONObject) person));
+//            }
+//        } catch(RuntimeException e) {
+//            throw new UnknownException(e);
+//        }
+//
+//    }
 
     private String executeGetRequest(String url, String token) throws UnauthorizedException, UnknownException {
         CloseableHttpClient httpclient = null;
@@ -82,5 +106,13 @@ public class PersonGateway {
         String strResponse = EntityUtils.toString(entity, StandardCharsets.UTF_8);
         EntityUtils.consume(entity);
         return strResponse;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

@@ -1,14 +1,18 @@
-package mvc.screens;
+package login.screens;
 
+import gateway.PersonGateway;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.layout.BorderPane;
-import login.gateway.PersonGateway;
-import login.gateway.SessionGateway;
-import login.screens.LoginController;
+import login.gateway.PersonGatewayAPI;
+import login.gateway.Session;
 import mvc.model.Person;
+import mvc.screens.PersonDetailController;
+import mvc.screens.PersonListController;
+import mvc.screens.MyController;
+import mvc.screens.ScreenType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -22,7 +26,7 @@ public class MainController implements Initializable {
 
     private static MainController instance = null;
 
-    private SessionGateway session;
+    private Session session;
 
     private PersonGateway personGateway;
 
@@ -30,7 +34,7 @@ public class MainController implements Initializable {
     private BorderPane rootPane;
 
     private MainController() {
-        personGateway = new PersonGateway();
+
     }
 
     public void switchView(ScreenType screenType, Object... args) {
@@ -42,7 +46,7 @@ public class MainController implements Initializable {
         switch (screenType) {
             case PERSONLIST:
                 viewFileName = "/views/mvc/person_list.fxml";
-                ArrayList<Person> people = (ArrayList<Person>) personGateway.fetchPeople(session.getSessionId());
+                ArrayList<Person> people = (ArrayList<Person>) personGateway.fetchPeople();
                 controller = new PersonListController(people);
                 break;
             case PERSONDETAIL:
@@ -84,12 +88,15 @@ public class MainController implements Initializable {
 
     // accessors
 
-    public SessionGateway getSession() {
+    public Session getSession() {
         return session;
     }
 
-    public void setSession(SessionGateway session) {
+    public void setSession(Session session) {
         this.session = session;
+
+        if(personGateway instanceof PersonGatewayAPI)
+            ((PersonGatewayAPI) personGateway).setToken(session.getSessionId());
     }
 
     public PersonGateway getPersonGateway() {

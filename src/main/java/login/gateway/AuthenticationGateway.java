@@ -19,7 +19,7 @@ import java.nio.charset.StandardCharsets;
 public class AuthenticationGateway {
     private static final Logger LOGGER = LogManager.getLogger();
 
-    public static SessionGateway login(String userName, String password) throws UnauthorizedException {
+    public static Session login(String userName, String password) throws UnauthorizedException {
         CloseableHttpClient httpclient = null;
         CloseableHttpResponse response = null;
 
@@ -44,7 +44,7 @@ public class AuthenticationGateway {
                     // use org.apache.http.util.EntityUtils to read json as string
                     String strResponse = EntityUtils.toString(entity, StandardCharsets.UTF_8);
                     EntityUtils.consume(entity);
-                    SessionGateway session = new SessionGateway(strResponse, userName);
+                    Session session = new Session(strResponse, userName);
                     return session;
                 case 401:
                     throw new UnauthorizedException("login failed");

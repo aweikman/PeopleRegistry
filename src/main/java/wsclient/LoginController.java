@@ -28,7 +28,7 @@
 //    void doLogin(ActionEvent event) {
 //        try {
 //            // authenticate using given credentials
-//            String sessionId = SessionGateway.authenticate(userName.getText(), password.getText());
+//            String sessionId = Session.authenticate(userName.getText(), password.getText());
 //            // dont need to check validity of sessionId as all other web service calls will check that
 //
 //            // fetch the dog list

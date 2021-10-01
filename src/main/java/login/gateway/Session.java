@@ -1,25 +1,18 @@
 package login.gateway;
 
-public class SessionGateway {
+public class Session {
     private String sessionId;
     private String userFullName;
 
-//    public SessionGateway() {
-//    }
-//
-//    public SessionGateway(String sessionId) {
-//        this.sessionId = sessionId;
-//        this.userFullName = "";
-//    }
 
-    public SessionGateway(String sessionId, String userFullName) {
+    public Session(String sessionId, String userFullName) {
         this.sessionId = sessionId;
         this.userFullName = userFullName;
     }
 
     @Override
     public String toString() {
-        return "SessionGateway{" +
+        return "Session{" +
                 "sessionId='" + sessionId + '\'' +
                 ", userName='" + userFullName + '\'' +
                 '}';

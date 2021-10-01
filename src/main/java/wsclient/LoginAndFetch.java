@@ -93,7 +93,7 @@
 //                return;
 //            }
 //
-//            logger.info("SessionGateway token: " + token);
+//            logger.info("Session token: " + token);
 //
 //            // IF WE GET HERE THEN WE HAVE A VALID SESSION TOKEN!!!
 //

@@ -5,7 +5,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import mvc.screens.MainController;
+import login.gateway.PersonGatewayAPI;
+import login.screens.MainController;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -34,6 +35,11 @@ public class AppMain extends Application {
 
         FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/views/mvc/main_view.fxml"));
         loader.setController(MainController.getInstance());
+
+        // INJECT the concrete gateway dependency
+        // MainController.getInstance().setCatGateway(new CatGatewayAPI());
+        MainController.getInstance().setPersonGateway(new PersonGatewayAPI());
+
         Parent rootNode = loader.load();
         stage.setScene(new Scene(rootNode));
 

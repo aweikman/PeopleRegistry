@@ -5,16 +5,22 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
+import login.gateway.PersonGatewayAPI;
+import login.gateway.Session;
+import login.screens.MainController;
 import mvc.model.Person;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.net.URL;
-import java.time.LocalDate;
 import java.util.ResourceBundle;
 
 public class PersonDetailController implements Initializable, MyController {
     private static final Logger LOGGER = LogManager.getLogger();
+
+    private PersonGatewayAPI personGateway;
+
+    private Session session;
 
     @FXML
     private TextField personFirstName;
@@ -67,7 +73,7 @@ public class PersonDetailController implements Initializable, MyController {
                 LOGGER.error("Person age must be an integer within valid range");
                 return;
             }
-
+//            personGateway.addPerson(session.getSessionId());
             // transition to personlist
             MainController.getInstance().switchView(ScreenType.PERSONLIST);
         }
