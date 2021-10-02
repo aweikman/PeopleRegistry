@@ -61,6 +61,7 @@ public class PersonGatewayAPI implements PersonGateway{
     public static void addPerson(Person person) {
         try {
             String response = executePostRequest(URL + "/people", token, person.getPersonFirstName(), person.getPersonLastName(), person.getDateOfBirth());
+            person.setId(4);
             people.add(person);
 
         } catch(RuntimeException e) {
@@ -73,7 +74,6 @@ public class PersonGatewayAPI implements PersonGateway{
 
             String response = executeDeleteRequest(URL + "/people/1", token);
             people.remove(person);
-            System.out.println(response);
 
         } catch (RuntimeException e) {
             throw new UnknownException(e);

@@ -64,15 +64,24 @@ package mvc.model;
 import org.json.JSONObject;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+
 
 public class Person {
+
     private int id;
     private String personFirstName;
     private String personLastName;
     private String dateOfBirth;
+//    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+//    String dateOfBirth1 = dateOfBirth.format(formatter);
+
     private int age;
 
-    public Person(int id, String personFirstName, String personLastName,  String dateOfBirth, int age) {
+    public Person(int id, String personFirstName, String personLastName, String dateOfBirth, int age) {
+
         this.id = id;
         this.personFirstName = personFirstName;
         this.personLastName = personLastName;
@@ -125,5 +134,6 @@ public class Person {
     public void setAge(int age) {
         this.age = age;
     }
+
 }
 
