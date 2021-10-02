@@ -62,6 +62,7 @@ public class PersonListController implements Initializable, MyController {
         if (personList.getSelectionModel().getSelectedItem().getId() == 1) {
             LOGGER.info("DELETING " + personList.getSelectionModel().getSelectedItem().getPersonFirstName());
             PersonGatewayAPI.deletePerson(personList.getSelectionModel().getSelectedItem());
+            MainController.getInstance().switchView(ScreenType.PERSONLIST);
 
         }
 

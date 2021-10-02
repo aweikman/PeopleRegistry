@@ -58,13 +58,24 @@ public class PersonGatewayAPI implements PersonGateway{
         return people;
     }
 
-
     public static void addPerson(Person person) {
         try {
             String response = executePostRequest(URL + "/people", token, person.getPersonFirstName(), person.getPersonLastName(), person.getDateOfBirth());
             people.add(person);
 
         } catch(RuntimeException e) {
+            throw new UnknownException(e);
+        }
+    }
+
+    public static void deletePerson(Person person) {
+        try {
+
+            String response = executeDeleteRequest(URL + "/people/1", token);
+            people.remove(person);
+            System.out.println(response);
+
+        } catch (RuntimeException e) {
             throw new UnknownException(e);
         }
     }
@@ -129,7 +140,6 @@ public class PersonGatewayAPI implements PersonGateway{
             }
         }
     }
-
 
 
     private static String executePutRequest(String url, String token, String personFirstName) {
@@ -222,15 +232,7 @@ public class PersonGatewayAPI implements PersonGateway{
         }
     }
 
-    public static void deletePerson(Person person) {
-        try {
 
-            String response = executeDeleteRequest(URL + "/people/1", token);
-
-        } catch (RuntimeException e) {
-            throw new UnknownException(e);
-        }
-    }
 
     private String executeGetRequest(String url, String token) throws UnauthorizedException, UnknownException {
         CloseableHttpClient httpclient = null;
