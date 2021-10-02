@@ -8,16 +8,12 @@
       }
     },
     "bodyPatterns" : [ {
-      "equalToJson" : "{\"person_first_name\":\"Lou\",\"person_last_name\":\"Smith\",\"dob\":\"1990-01-01\"}",
+      "equalToJson" : "{\"fstName\":\"Lou\",\"person_last_name\":\"Smith\",\"dob\":\"1990-01-01\"}",
       "ignoreArrayOrder" : true,
       "ignoreExtraElements" : true
     } ]
   },
   "response": {
-    "status": 200,
-    "body": "{\"id\":4}",
-    "headers": {
-      "Content-Type": "application/json"
-    }
+    "status": 400
   }
 }
