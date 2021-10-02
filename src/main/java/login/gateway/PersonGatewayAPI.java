@@ -5,10 +5,7 @@ import myexceptions.UnauthorizedException;
 import myexceptions.UnknownException;
 import mvc.model.Person;
 import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.*;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -75,12 +72,13 @@ public class PersonGatewayAPI implements PersonGateway{
     public static void updatePerson(Person person) {
         try {
             String response = executePutRequest(URL + "/people/1", token, person.getPersonFirstName());
-            System.out.println("test");
 
         } catch (RuntimeException e) {
             throw new UnknownException(e);
         }
     }
+
+
 
     private static String executePostRequest(String url, String token, String personFirstName, String personLastName, String personDateOfBirth) {
         CloseableHttpClient httpclient = null;
@@ -182,6 +180,57 @@ public class PersonGatewayAPI implements PersonGateway{
         }
     }
 
+
+    private static String executeDeleteRequest(String url, String token) {
+        CloseableHttpClient httpclient = null;
+        CloseableHttpResponse response = null;
+
+        try {
+            httpclient = HttpClients.createDefault();
+            HttpDelete deleteRequest = new HttpDelete(url);
+
+            if(token != null && token.length() > 0)
+                deleteRequest.setHeader("Authorization", token);
+            // use this for submitting form data as raw json
+
+            response = httpclient.execute(deleteRequest);
+
+            switch(response.getStatusLine().getStatusCode()) {
+                case 200:
+                    return getStringFromResponse(response);
+                case 401:
+                    throw new UnauthorizedException(response.getStatusLine().getReasonPhrase());
+                default:
+                    throw new UnknownException(response.getStatusLine().getReasonPhrase());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new UnauthorizedException(e);
+
+        } finally {
+            try {
+                if(response != null) {
+                    response.close();
+                }
+                if(httpclient != null) {
+                    httpclient.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                throw new UnauthorizedException(e);
+            }
+        }
+    }
+
+    public static void deletePerson(Person person) {
+        try {
+
+            String response = executeDeleteRequest(URL + "/people/1", token);
+
+        } catch (RuntimeException e) {
+            throw new UnknownException(e);
+        }
+    }
 
     private String executeGetRequest(String url, String token) throws UnauthorizedException, UnknownException {
         CloseableHttpClient httpclient = null;

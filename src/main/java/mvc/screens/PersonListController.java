@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
 import javafx.scene.input.MouseEvent;
+import login.gateway.PersonGatewayAPI;
 import login.screens.MainController;
 import mvc.model.Person;
 import org.apache.logging.log4j.LogManager;
@@ -51,13 +52,19 @@ public class PersonListController implements Initializable, MyController {
 
     @FXML
     void deletePerson(ActionEvent event) {
-        if (personList.getSelectionModel().getSelectedItem() != null) {
-            LOGGER.info("DELETING " + personList.getSelectionModel().getSelectedItem().getPersonFirstName());
-        }
-        else
+
+        if (personList.getSelectionModel().getSelectedItem() == null)
         {
             LOGGER.info("ITEM NOT SELECTED");
+            return;
         }
+
+        if (personList.getSelectionModel().getSelectedItem().getId() == 1) {
+            LOGGER.info("DELETING " + personList.getSelectionModel().getSelectedItem().getPersonFirstName());
+            PersonGatewayAPI.deletePerson(personList.getSelectionModel().getSelectedItem());
+
+        }
+
     }
 
     @Override
