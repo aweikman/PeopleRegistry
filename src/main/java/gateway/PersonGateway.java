@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface PersonGateway {
     public abstract List<Person> fetchPeople() throws UnauthorizedException, UnknownException;
+
 }

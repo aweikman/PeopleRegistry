@@ -20,6 +20,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class LoginController implements Initializable, MyController {
+
     private static final Logger LOGGER = LogManager.getLogger();
 
     @FXML

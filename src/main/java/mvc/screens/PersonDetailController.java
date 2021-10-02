@@ -1,5 +1,6 @@
 package mvc.screens;
 
+import gateway.PersonGateway;
 import javafx.Alerts;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -9,16 +10,40 @@ import login.gateway.PersonGatewayAPI;
 import login.gateway.Session;
 import login.screens.MainController;
 import mvc.model.Person;
+import myexceptions.UnauthorizedException;
+import myexceptions.UnknownException;
+import org.apache.http.HttpEntity;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.JSONObject;
 
+import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class PersonDetailController implements Initializable, MyController {
+
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private PersonGatewayAPI personGateway;
+    private Person person;
+
+    private PersonGateway personGateway;
+
+    public PersonDetailController(Person person) {
+        this.person = person;
+    }
 
     private Session session;
 
@@ -36,12 +61,6 @@ public class PersonDetailController implements Initializable, MyController {
 
     @FXML
     private TextField personId;
-
-    private Person person;
-
-    public PersonDetailController(Person person) {
-        this.person = person;
-    }
 
     @FXML
     void cancel(ActionEvent event) {
@@ -73,7 +92,10 @@ public class PersonDetailController implements Initializable, MyController {
                 LOGGER.error("Person age must be an integer within valid range");
                 return;
             }
-//            personGateway.addPerson(session.getSessionId());
+
+            PersonGatewayAPI.addPerson(person);
+
+            System.out.print(person.getId());
             // transition to personlist
             MainController.getInstance().switchView(ScreenType.PERSONLIST);
         }
@@ -95,12 +117,11 @@ public class PersonDetailController implements Initializable, MyController {
                 LOGGER.error("Hey man, person age must be an integer from 0 to 40");
                 return;
             }
+
+
             // transition to personlist
             MainController.getInstance().switchView(ScreenType.PERSONLIST);
         }
-
-
-
 
 
         // TODO: save the data to the database somewhere

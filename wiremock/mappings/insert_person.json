@@ -1,7 +1,7 @@
 {
   "request": {
     "method": "POST",
-    "url": "/people/1",
+    "url": "/people",
     "headers" : {
       "Authorization" : {
         "contains" : "i am a session token"
@@ -15,7 +15,7 @@
   },
   "response": {
     "status": 200,
-    "body": "[{\"id\":4}]",
+    "body": "{\"id\":4}",
     "headers": {
       "Content-Type": "application/json"
     }
