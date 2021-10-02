@@ -8,6 +8,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -69,9 +70,16 @@ public class PersonGatewayAPI implements PersonGateway{
         } catch(RuntimeException e) {
             throw new UnknownException(e);
         }
+    }
 
+    public static void updatePerson(Person person) {
+        try {
+            String response = executePutRequest(URL + "/people/1", token, person.getPersonFirstName());
+            System.out.println("test");
 
-
+        } catch (RuntimeException e) {
+            throw new UnknownException(e);
+        }
     }
 
     private static String executePostRequest(String url, String token, String personFirstName, String personLastName, String personDateOfBirth) {
@@ -96,6 +104,56 @@ public class PersonGatewayAPI implements PersonGateway{
             postRequest.setEntity(reqEntity);
 
             response = httpclient.execute(postRequest);
+
+            switch(response.getStatusLine().getStatusCode()) {
+                case 200:
+                    return getStringFromResponse(response);
+                case 401:
+                    throw new UnauthorizedException(response.getStatusLine().getReasonPhrase());
+                default:
+                    throw new UnknownException(response.getStatusLine().getReasonPhrase());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new UnauthorizedException(e);
+
+        } finally {
+            try {
+                if(response != null) {
+                    response.close();
+                }
+                if(httpclient != null) {
+                    httpclient.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                throw new UnauthorizedException(e);
+            }
+        }
+    }
+
+
+
+    private static String executePutRequest(String url, String token, String personFirstName) {
+        CloseableHttpClient httpclient = null;
+        CloseableHttpResponse response = null;
+
+        try {
+            httpclient = HttpClients.createDefault();
+            HttpPut putRequest = new HttpPut(url);
+
+            if(token != null && token.length() > 0)
+                putRequest.setHeader("Authorization", token);
+            // use this for submitting form data as raw json
+            JSONObject formData = new JSONObject();
+            formData.put("person_first_name", personFirstName);
+            String formDataString = formData.toString();
+
+            StringEntity reqEntity = new StringEntity(formDataString);
+
+            putRequest.setEntity(reqEntity);
+
+            response = httpclient.execute(putRequest);
 
             switch(response.getStatusLine().getStatusCode()) {
                 case 200:

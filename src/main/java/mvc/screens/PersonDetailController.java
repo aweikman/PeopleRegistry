@@ -94,8 +94,6 @@ public class PersonDetailController implements Initializable, MyController {
             }
 
             PersonGatewayAPI.addPerson(person);
-
-            System.out.print(person.getId());
             // transition to personlist
             MainController.getInstance().switchView(ScreenType.PERSONLIST);
         }
@@ -118,7 +116,7 @@ public class PersonDetailController implements Initializable, MyController {
                 return;
             }
 
-
+            PersonGatewayAPI.updatePerson(person);
             // transition to personlist
             MainController.getInstance().switchView(ScreenType.PERSONLIST);
         }
