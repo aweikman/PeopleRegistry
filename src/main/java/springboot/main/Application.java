@@ -32,7 +32,7 @@ public class Application {
             Arrays.sort(beanNames);
             for (String beanName : beanNames) {
                 // we only care about our particular service controllers
-                if(beanName.substring(0, 3).equalsIgnoreCase("Peo"))
+                if(beanName.substring(0, 3).equalsIgnoreCase(""))
                     System.out.println(beanName);
             }
 

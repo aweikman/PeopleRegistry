@@ -8,6 +8,7 @@ import javax.persistence.*;
 
 public class Users {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Integer id;
 
@@ -17,8 +18,6 @@ public class Users {
     @Column(name = "password", nullable = false, length = 100)
     private String password;
 
-    public Users() {}
-
     @Override
     public String toString() {
         return getUsername();
@@ -27,7 +26,6 @@ public class Users {
     public String getUsername() {
         return username;
     }
-
     public void setUsername(String username) {
         this.username = username;
     }

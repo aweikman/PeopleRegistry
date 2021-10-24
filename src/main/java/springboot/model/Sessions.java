@@ -1,9 +1,6 @@
 package springboot.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "session")
@@ -13,22 +10,22 @@ public class Sessions {
     @Column(name = "token", nullable = false)
     private String token;
 
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id", nullable = false, length = 100)
-    private String username;
+    private int userId;
 
     public Sessions() {}
 
     @Override
-
     public String toString() {
         return getToken();
     }
 
-    public String getUsername() {
-        return username;
+    public Integer getUserId() {
+        return userId;
     }
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 
     public String getToken() {
