@@ -3,6 +3,9 @@ package springboot.repository;
 import springboot.model.Users;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface UsersRepository extends JpaRepository <Users, Long> {
+import java.util.List;
 
+public interface UsersRepository extends JpaRepository <Users, Integer> {
+
+//    List<Users> findAllByLoginAndPAssword(String username, String hashedPassword);
 }

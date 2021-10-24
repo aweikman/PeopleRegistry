@@ -8,23 +8,27 @@ import javax.persistence.*;
 
 public class People {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    private Long id;
+    private Integer id;
 
-    @Column(name = "firstName", nullable = false, length = 100)
+    @Column(name = "first_name", nullable = false, length = 100)
     private String firstName;
 
-    @Column(name = "lastName", nullable = false, length = 100)
+    @Column(name = "last_name", nullable = false, length = 100)
     private String lastName;
 
     @Column(name = "dob", nullable = false, length = 100)
     private String dateOfBirth;
 
-    public People() {}
 
     @Override
     public String toString() {
-        return firstName;
+        return "People{" +
+                "firstName=" + firstName +
+                ", lastName=" + lastName +
+                ", dateOfBirth='" + dateOfBirth + '\'' +
+                '}';
     }
 
     public String getFirstName() {
@@ -36,19 +40,17 @@ public class People {
     public String getDateOfBirth(){
         return dateOfBirth;
     }
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-    public void setLastName(String firstName) {
+    public void setFirstName(String firstName) {this.firstName = firstName;}
+    public void setLastName(String lastName) {
         this.lastName = lastName;
     }
-    public void setDateOfBirth(String firstName) {
+    public void setDateOfBirth(String dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
