@@ -31,16 +31,16 @@ public class LoginController implements Initializable, MyController {
 
     @FXML
     void doLogin(ActionEvent event) {
+
         String login = this.login.getText();
-        String hashedPassword = HashUtils.getCryptoHash(this.password.getText(), "SHA-256");
-        LOGGER.info(this.password.getText() + " hashes to " + hashedPassword);
-        LOGGER.info(login + " " + hashedPassword);
+        String pass = this.password.getText();
+        LOGGER.info(login + " " + pass);
 
         // check login with logingateway
         // login will throw an exception if it fails
         Session session = null;
         try {
-            session = AuthenticationGateway.login(login, hashedPassword);
+            session = AuthenticationGateway.login(login, pass);
         } catch(UnauthorizedException e) {
             Alerts.infoAlert("Login failed!", "Either your username or your password is incorrect.");
             return;

@@ -12,6 +12,8 @@ import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -36,6 +38,9 @@ public class AuthenticationGateway {
             StringEntity reqEntity = new StringEntity(formDataString);
             postRequest.setEntity(reqEntity);
 
+            postRequest.setHeader("Accept","application/json");
+            postRequest.setHeader("Content-Type","application/json");
+
             response = httpclient.execute(postRequest);
 
             switch(response.getStatusLine().getStatusCode()) {
@@ -44,7 +49,15 @@ public class AuthenticationGateway {
                     // use org.apache.http.util.EntityUtils to read json as string
                     String strResponse = EntityUtils.toString(entity, StandardCharsets.UTF_8);
                     EntityUtils.consume(entity);
+
+                    //cannot find way to get the token from entity, so i get the whole response body,
+                    //make a new json obj from that, then  get the token from the new obj and save it
+                    LOGGER.info("strResponse = "+strResponse);
+                    JSONObject j = new JSONObject(strResponse);
+                    strResponse = (String) j.get("token");
+
                     Session session = new Session(strResponse, userName);
+                    System.out.println(session.getSessionId());
                     return session;
                 case 401:
                     throw new UnauthorizedException("login failed");

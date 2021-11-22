@@ -8,6 +8,7 @@ import javafx.scene.Parent;
 import javafx.scene.layout.BorderPane;
 import login.gateway.PersonGatewayAPI;
 import login.gateway.Session;
+import mvc.model.AuditTrail;
 import mvc.model.Person;
 import mvc.screens.PersonDetailController;
 import mvc.screens.PersonListController;
@@ -30,6 +31,8 @@ public class MainController implements Initializable {
     private Session session;
 
     private PersonGateway personGateway;
+
+    private AuditTrail auditTrail;
 
     @FXML
     private BorderPane rootPane;
@@ -55,7 +58,14 @@ public class MainController implements Initializable {
                 if(!(args[0] instanceof Person)) {
                     throw new IllegalArgumentException("Hey that's not a person! " + args[0].toString());
                 }
-                controller = new PersonDetailController((Person) args[0]);
+                int id = ((Person)args[0]).getId();
+                if(id == 0)
+                {
+                    controller = new PersonDetailController((Person)args[0]);
+                    break;
+                }
+                ArrayList<AuditTrail> auditTrail = (ArrayList<AuditTrail>) personGateway.fetchAuditTrail(id);
+                controller = new PersonDetailController((Person)args[0], auditTrail);
                 break;
             case LOGIN:
                 viewFileName = "/views/mvc/login.fxml";
@@ -106,6 +116,14 @@ public class MainController implements Initializable {
 
     public void setPersonGateway(PersonGateway personGateway) {
         this.personGateway = personGateway;
+    }
+
+    public AuditTrail getAuditTrail() {
+        return auditTrail;
+    }
+
+    public void setAuditTrail(AuditTrail auditTrail) {
+        this.auditTrail = auditTrail;
     }
 }
 

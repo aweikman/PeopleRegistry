@@ -63,36 +63,25 @@ package mvc.model;
 
 import org.json.JSONObject;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
-
-
 public class Person {
 
     private int id;
     private String personFirstName;
     private String personLastName;
     private String dateOfBirth;
-//    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-//    String dateOfBirth1 = dateOfBirth.format(formatter);
 
-    private int age;
-
-    public Person(int id, String personFirstName, String personLastName, String dateOfBirth, int age) {
+    public Person(String personFirstName, String personLastName, String dateOfBirth, int id) {
 
         this.id = id;
         this.personFirstName = personFirstName;
         this.personLastName = personLastName;
         this.dateOfBirth = dateOfBirth;
-        this.age = age;
     }
 
     public static Person fromJSONObject(JSONObject json) {
         try {
-            Person person = new Person(json.getInt("id"), json.getString("person_first_name"),
-                    json.getString("person_last_name"), json.getString("dob"), json.getInt("age"));
+            Person person = new Person(json.getString("firstName"),
+                    json.getString("lastName"), json.getString("dateOfBirth"), json.getInt("id"));
             return person;
         } catch(Exception e) {
             throw new IllegalArgumentException("Unable to parse person from provided json: " + json.toString());
@@ -101,7 +90,7 @@ public class Person {
 
     @Override
     public String toString() {
-        return getId() + " " + getPersonFirstName() + " " + getPersonLastName() + " " + getDateOfBirth() + " " + getAge();
+        return getId() + " " + getPersonFirstName() + " " + getPersonLastName() + " " + getDateOfBirth();
     }
 
     // accessors
@@ -127,13 +116,5 @@ public class Person {
 
     public String getDateOfBirth() { return dateOfBirth; }
     public void setDateOfBirth(String dateOfBirth) { this.dateOfBirth = dateOfBirth; }
-
-    public int getAge() {
-        return age;
-    }
-    public void setAge(int age) {
-        this.age = age;
-    }
-
 }
 

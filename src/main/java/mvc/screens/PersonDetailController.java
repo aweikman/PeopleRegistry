@@ -2,13 +2,20 @@ package mvc.screens;
 
 import gateway.PersonGateway;
 import javafx.Alerts;
+import javafx.beans.Observable;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import login.gateway.PersonGatewayAPI;
 import login.gateway.Session;
 import login.screens.MainController;
+import mvc.model.AuditTrail;
 import mvc.model.Person;
 import myexceptions.UnauthorizedException;
 import myexceptions.UnknownException;
@@ -29,7 +36,11 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -39,7 +50,14 @@ public class PersonDetailController implements Initializable, MyController {
 
     private Person person;
 
+    private ObservableList<AuditTrail> auditTrail;
+
     private PersonGateway personGateway;
+
+    public PersonDetailController(Person person, ArrayList<AuditTrail> auditTrail) {
+        this.person = person;
+        this.auditTrail = FXCollections.observableArrayList(auditTrail);
+    }
 
     public PersonDetailController(Person person) {
         this.person = person;
@@ -47,6 +65,7 @@ public class PersonDetailController implements Initializable, MyController {
 
     private Session session;
 
+    //detail fxmls
     @FXML
     private TextField personFirstName;
 
@@ -57,10 +76,25 @@ public class PersonDetailController implements Initializable, MyController {
     private TextField personDateOfBirth;
 
     @FXML
-    private TextField personAge;
+    private TextField personId;
+
+    //audit trail fxmls
+    @FXML
+    private TableColumn personChanged;
 
     @FXML
-    private TextField personId;
+    private TableColumn changeMsg;
+
+    @FXML
+    private TableColumn whenOccured;
+
+    @FXML
+    private TableColumn changedBy;
+
+    @FXML
+    private TableView table;
+
+
 
     @FXML
     void cancel(ActionEvent event) {
@@ -70,63 +104,61 @@ public class PersonDetailController implements Initializable, MyController {
 
     @FXML
     void save(ActionEvent event) {
+
+        // code for checking if entered date is after current date
+        Date date = null;
+        SimpleDateFormat sdf = null;
+        try {
+            // set format for entered date
+            sdf = new SimpleDateFormat("MM-dd-yyyy");
+
+            // instantiate date entered
+            date = sdf.parse(personDateOfBirth.getText());
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        // instantiate current date to compare entered date
+        Date currentDate = new Date();
+
         // temporary catch for empty fields to make sure user does not input empty lines
-        if(personId.getText().isEmpty() || personFirstName.getText().isEmpty() || personLastName.getText().isEmpty() || personDateOfBirth.getText().isEmpty() || personAge.getText().isEmpty())
-        {
+        if (personId.getText().isEmpty() || personFirstName.getText().isEmpty() || personLastName.getText().isEmpty() || personDateOfBirth.getText().isEmpty()) {
             Alerts.infoAlert("Error", "Please fill in all fields");
         }
+        if (date.after(currentDate)) {
+            Alerts.infoAlert("Error", "Date of birth must be before current date");
+        }
 
-        else if(person.getId() == 0) {
+        boolean checkFormat;
+        if (personDateOfBirth.getText().matches("([0-9]{2})-([0-9]{2})-([0-9]{4})"))
+            checkFormat=true;
+        else
+            checkFormat=false;
+        if (checkFormat == false)
+        {
+            Alerts.infoAlert("Error", "Date of birth must be entered as MM-dd-yyyy");
+        }
+        else if (person.getId() == 0) {
             LOGGER.info("CREATING");
             // TODO: validate text fields FIRST before you save them to model
-            person.setId(Integer.parseInt(personId.getText()));
             person.setDateOfBirth(personDateOfBirth.getText());
             person.setPersonFirstName(personFirstName.getText());
             person.setPersonLastName(personLastName.getText());
-
-            try {
-                person.setAge(Integer.parseInt(personAge.getText()));
-            } catch(NumberFormatException e) {
-                // TODO: find and plug in your alert helper functions
-                // Alert errorAlert = new Alert(Alert.AlertType.ERROR)
-                LOGGER.error("Person age must be an integer within valid range");
-                return;
-            }
 
             PersonGatewayAPI.addPerson(person);
             // transition to personlist
             MainController.getInstance().switchView(ScreenType.PERSONLIST);
         }
-
-        else
-        {
+        else {
             LOGGER.info("UPDATING");
-            // TODO: validate text fields FIRST before you save them to model
-            person.setId(Integer.parseInt(personId.getText()));
             person.setDateOfBirth(personDateOfBirth.getText());
             person.setPersonFirstName(personFirstName.getText());
             person.setPersonLastName(personLastName.getText());
-
-            try {
-                person.setAge(Integer.parseInt(personAge.getText()));
-            } catch(NumberFormatException e) {
-                // TODO: find and plug in your alert helper functions
-                // Alert errorAlert = new Alert(Alert.AlertType.ERROR)
-                LOGGER.error("Hey man, person age must be an integer from 0 to 40");
-                return;
-            }
 
             PersonGatewayAPI.updatePerson(person);
             // transition to personlist
             MainController.getInstance().switchView(ScreenType.PERSONLIST);
         }
-
-
-        // TODO: save the data to the database somewhere
-        // TODO: what id db save fails?
-        // ALERT
-
-
     }
 
     @Override
@@ -136,7 +168,15 @@ public class PersonDetailController implements Initializable, MyController {
         personFirstName.setText(person.getPersonFirstName());
         personLastName.setText(person.getPersonLastName());
         personDateOfBirth.setText(String.valueOf(person.getDateOfBirth()));
-        personAge.setText("" + person.getAge());
+
+        // this is where we connect the model data of AugditTrail to gui tableview components
+        if(person.getId() != 0 ) {
+            changeMsg.setCellValueFactory(new PropertyValueFactory<AuditTrail, String>("changeMsg"));
+            changedBy.setCellValueFactory(new PropertyValueFactory<AuditTrail, Integer>("changedBy"));
+            personChanged.setCellValueFactory(new PropertyValueFactory<AuditTrail, Integer>("personId"));
+            whenOccured.setCellValueFactory(new PropertyValueFactory<AuditTrail, Instant>("whenOccured"));
+            table.setItems(auditTrail);
+        }
     }
 
 

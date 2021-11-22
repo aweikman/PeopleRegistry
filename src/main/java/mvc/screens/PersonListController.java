@@ -47,7 +47,7 @@ public class PersonListController implements Initializable, MyController {
 
         // load the person detail with an empty person
         // call the main controller switch view method
-        MainController.getInstance().switchView(ScreenType.PERSONDETAIL, new Person(0, "", "", LocalDate.now().toString(), 20));
+        MainController.getInstance().switchView(ScreenType.PERSONDETAIL, new Person("", "", "01-01-2021", 0));
     }
 
     @FXML
@@ -59,12 +59,12 @@ public class PersonListController implements Initializable, MyController {
             return;
         }
 
-        if (personList.getSelectionModel().getSelectedItem().getId() == 1) {
-            LOGGER.info("DELETING " + personList.getSelectionModel().getSelectedItem().getPersonFirstName());
-            PersonGatewayAPI.deletePerson(personList.getSelectionModel().getSelectedItem());
-            MainController.getInstance().switchView(ScreenType.PERSONLIST);
+//        if (personList.getSelectionModel().getSelectedItem().getId() == 1) {
+        LOGGER.info("DELETING " + personList.getSelectionModel().getSelectedItem().getPersonFirstName());
+        PersonGatewayAPI.deletePerson(personList.getSelectionModel().getSelectedItem());
+        MainController.getInstance().switchView(ScreenType.PERSONLIST);
 
-        }
+//        }
 
     }
 

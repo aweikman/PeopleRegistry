@@ -61,7 +61,7 @@ public class LoginController {
             JSONObject newToken = new JSONObject();
             newToken.put("token", session.getToken());
 
-            return new ResponseEntity<>( user.getUsername() +"'s Token ID:  " + newToken.toString(), HttpStatus.valueOf(200));
+            return new ResponseEntity<>(newToken.toString(), HttpStatus.valueOf(200));
         }
     }
 }

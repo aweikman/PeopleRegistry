@@ -1,6 +1,8 @@
 package login.gateway;
 
 import gateway.PersonGateway;
+import javafx.scene.control.TableView;
+import mvc.model.AuditTrail;
 import myexceptions.UnauthorizedException;
 import myexceptions.UnknownException;
 import mvc.model.Person;
@@ -19,6 +21,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class PersonGatewayAPI implements PersonGateway{
 
     private static final String URL = "http://localhost:8080";
@@ -35,10 +38,25 @@ public class PersonGatewayAPI implements PersonGateway{
         this.token = token;
     }
 
-    static List<Person> people = new ArrayList<>();
+    public List<AuditTrail> fetchAuditTrail(int id) throws UnauthorizedException, UnknownException {
+        List<AuditTrail> auditTrail = new ArrayList<>();
+        try {
+                String response = executeGetRequest(URL + "/people/" + id +"/audittrail", token);
+                JSONArray auditTrailList = new JSONArray(response);
+                for (Object aTrail : auditTrailList) {
+                    auditTrail.add(AuditTrail.fromJSONObject((JSONObject) aTrail));
+                }
+
+        } catch(RuntimeException e) {
+            throw new UnknownException(e);
+        }
+
+        return auditTrail;
+    }
+
 
     public List<Person> fetchPeople() throws UnauthorizedException, UnknownException {
-
+        List<Person> people = new ArrayList<>();
 
         try {
             if(people.size() == 0) {
@@ -61,8 +79,7 @@ public class PersonGatewayAPI implements PersonGateway{
     public static void addPerson(Person person) {
         try {
             String response = executePostRequest(URL + "/people", token, person.getPersonFirstName(), person.getPersonLastName(), person.getDateOfBirth());
-            person.setId(4);
-            people.add(person);
+//            people.add(person);
 
         } catch(RuntimeException e) {
             throw new UnknownException(e);
@@ -71,9 +88,9 @@ public class PersonGatewayAPI implements PersonGateway{
 
     public static void deletePerson(Person person) {
         try {
-
-            String response = executeDeleteRequest(URL + "/people/1", token);
-            people.remove(person);
+            int id = person.getId();
+            String response = executeDeleteRequest(URL + "/people/" + id, token);
+//            people.remove(person);
 
         } catch (RuntimeException e) {
             throw new UnknownException(e);
@@ -82,7 +99,8 @@ public class PersonGatewayAPI implements PersonGateway{
 
     public static void updatePerson(Person person) {
         try {
-            String response = executePutRequest(URL + "/people/1", token, person.getPersonFirstName());
+            int id = person.getId();
+            String response = executePutRequest(URL + "/people/" + id, token, person.getPersonFirstName(), person.getPersonLastName(), person.getDateOfBirth());
 
         } catch (RuntimeException e) {
             throw new UnknownException(e);
@@ -103,14 +121,17 @@ public class PersonGatewayAPI implements PersonGateway{
                 postRequest.setHeader("Authorization", token);
             // use this for submitting form data as raw json
             JSONObject formData = new JSONObject();
-            formData.put("person_first_name", personFirstName);
-            formData.put("person_last_name", personLastName);
-            formData.put("dob", personDateOfBirth);
+            formData.put("firstName", personFirstName);
+            formData.put("lastName", personLastName);
+            formData.put("dateOfBirth", personDateOfBirth);
             String formDataString = formData.toString();
 
             StringEntity reqEntity = new StringEntity(formDataString);
 
             postRequest.setEntity(reqEntity);
+
+            postRequest.setHeader("Accept","application/json");
+            postRequest.setHeader("Content-Type","application/json");
 
             response = httpclient.execute(postRequest);
 
@@ -142,7 +163,7 @@ public class PersonGatewayAPI implements PersonGateway{
     }
 
 
-    private static String executePutRequest(String url, String token, String personFirstName) {
+    private static String executePutRequest(String url, String token, String personFirstName, String personLastName, String personDateOfBirth) {
         CloseableHttpClient httpclient = null;
         CloseableHttpResponse response = null;
 
@@ -154,12 +175,17 @@ public class PersonGatewayAPI implements PersonGateway{
                 putRequest.setHeader("Authorization", token);
             // use this for submitting form data as raw json
             JSONObject formData = new JSONObject();
-            formData.put("person_first_name", personFirstName);
+            formData.put("firstName", personFirstName);
+            formData.put("lastName", personLastName);
+            formData.put("dateOfBirth", personDateOfBirth);
             String formDataString = formData.toString();
 
             StringEntity reqEntity = new StringEntity(formDataString);
 
             putRequest.setEntity(reqEntity);
+
+            putRequest.setHeader("Accept","application/json");
+            putRequest.setHeader("Content-Type","application/json");
 
             response = httpclient.execute(putRequest);
 
