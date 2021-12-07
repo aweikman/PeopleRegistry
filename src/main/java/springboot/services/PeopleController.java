@@ -1,30 +1,26 @@
 package springboot.services;
 
-import mvc.model.Person;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import pw_hash.HashUtils;
 import springboot.model.AuditTrail;
 import springboot.model.People;
-import springboot.model.Users;
 import springboot.repository.AuditTrailRepository;
 import springboot.repository.PeopleRepository;
 import springboot.repository.SessionsRepository;
-import springboot.repository.UsersRepository;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -43,19 +39,21 @@ public class PeopleController {
 
 
     @GetMapping("/people")
-    public ResponseEntity<List<People>> fetchPeople(@RequestHeader HttpHeaders headers) {
+    public ResponseEntity<Page<People>> fetchPeople(@RequestHeader HttpHeaders headers, @RequestParam(value = "pageNum", required = false) int pageNum, @RequestParam(value = "lastName", required = false) String lastName) {
 
         // initialize token based on header
         String sessionToken = headers.get("authorization").get(0);
 
         // if token is not correct or not present return 401
         if(sessionRepository.findById(sessionToken).isEmpty() || !headers.containsKey("authorization")){
-            return new ResponseEntity("Session token is invalid or missing.", HttpStatus.valueOf(401));
+           return new ResponseEntity("Session token is invalid or missing.", HttpStatus.valueOf(401));
         }
-
+//        lastName = "";
+//        pageNum = 1;
+        Pageable firstTen = PageRequest.of(pageNum,10);
         // return 200 and fetch list of people from the db
-        List<People> person = peopleRepository.findAll();
-        return new ResponseEntity<>(person, HttpStatus.valueOf(200));
+//        List<People> person = peopleRepository.findAll();
+        return new ResponseEntity<>(peopleRepository.findAllByLastNameStartingWith(lastName, firstTen), HttpStatus.valueOf(200));
     }
 
     @DeleteMapping("/people/{id}")
@@ -135,7 +133,7 @@ public class PeopleController {
 
     @PutMapping("/people/{id}")
     @ResponseBody
-    public ResponseEntity<String> updatePerson(@PathVariable("id") int personId, @RequestBody People person, @RequestHeader HttpHeaders headers) {
+    public Object updatePerson(@PathVariable("id") int personId, @RequestBody People person, @RequestHeader HttpHeaders headers) {
 
         // initialize token based on header
         String sessionToken = headers.get("authorization").get(0);
@@ -144,6 +142,7 @@ public class PeopleController {
         String oldLastName = peopleRepository.findById(personId).get().getLastName();
         String oldFirstName = peopleRepository.findById(personId).get().getFirstName();
         String oldDateofBirth = peopleRepository.findById(personId).get().getDateOfBirth();
+        Instant lastModified = peopleRepository.findById(personId).get().getLastModified();
 
         // if token is not correct or not present return 401
         if(sessionRepository.findById(sessionToken).isEmpty() || !headers.containsKey("authorization")){
@@ -177,14 +176,21 @@ public class PeopleController {
             return new ResponseEntity<>(null, HttpStatus.valueOf(404));
         }
 
-        // else we are returning 200 and updating table
 
+        // else we are returning 200 and updating table
         // we don't expect the incoming json to have the widget's id, so we set it
         person.setId(personId);
 
         // update person in table based on id
         person = peopleRepository.save(person);
 
+//        if(person.getLastModified().equals(lastModified)) {
+//            // update person in table based on id
+//            person = peopleRepository.save(person);
+//        }
+//        else {
+//            return new ResponseEntity<>("Another user has just made a change to this record", HttpStatus.valueOf(409));
+//        }
         //case statements for audittrail messages
         String changed_msg = "";
         if(!person.getLastName().equals(oldLastName)){
@@ -201,7 +207,6 @@ public class PeopleController {
         }
 
         //update audit trail with information based on user and modified data
-        LOGGER.info("Changed msg: "+changed_msg);
         int userId = sessionRepository.findById(sessionToken).get().getUserId();
         AuditTrail auditTrail = new AuditTrail(changed_msg, userId, person.getId(), Instant.now());
         try {

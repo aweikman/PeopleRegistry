@@ -1,11 +1,11 @@
 package login.gateway;
 
 import gateway.PersonGateway;
-import javafx.scene.control.TableView;
 import mvc.model.AuditTrail;
+import mvc.model.FetchResults;
+import mvc.model.Person;
 import myexceptions.UnauthorizedException;
 import myexceptions.UnknownException;
-import mvc.model.Person;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.*;
 import org.apache.http.entity.StringEntity;
@@ -15,9 +15,9 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,25 +55,33 @@ public class PersonGatewayAPI implements PersonGateway{
     }
 
 
-    public List<Person> fetchPeople() throws UnauthorizedException, UnknownException {
-        List<Person> people = new ArrayList<>();
+    public FetchResults fetchPeople(int pageNum, String lastName) throws UnauthorizedException, UnknownException {
+        ArrayList<Person> people = new ArrayList<>();
+        FetchResults results = new FetchResults();
 
         try {
             if(people.size() == 0) {
-                String response = executeGetRequest(URL + "/people", token);
-                JSONArray personList = new JSONArray(response);
+                String response = executeGetRequest(URL + "/people?pageNum="+pageNum+"&lastName="+lastName, token);
+                JSONObject personPage = new JSONObject(response);
+//                System.out.println("HELLPP ME GOD " + personPage);
+                JSONArray personList = personPage.getJSONArray("content");
+
                 for (Object person : personList) {
                     people.add(Person.fromJSONObject((JSONObject) person));
                 }
+                results.setPeople(people);
+                results.setTotalElements(personPage.getInt("totalElements"));
+                results.setOffSet(personPage.getJSONObject("pageable").getInt("pageNumber"));
+                results.setTotalPages(personPage.getInt("totalPages"));
+                results.setFirstIndex(personPage.getJSONObject("pageable").getInt("offset"));
+                results.setLastIndex(personPage.getInt("numberOfElements") + personPage.getJSONObject("pageable").getInt("offset"));
             }
-            else {
-                return people;
-            }
+
         } catch(RuntimeException e) {
             throw new UnknownException(e);
         }
 
-        return people;
+        return results;
     }
 
     public static void addPerson(Person person) {
@@ -100,7 +108,7 @@ public class PersonGatewayAPI implements PersonGateway{
     public static void updatePerson(Person person) {
         try {
             int id = person.getId();
-            String response = executePutRequest(URL + "/people/" + id, token, person.getPersonFirstName(), person.getPersonLastName(), person.getDateOfBirth());
+            String response = executePutRequest(URL + "/people/" + id, token, person.getPersonFirstName(), person.getPersonLastName(), person.getDateOfBirth(), person.getLastModified());
 
         } catch (RuntimeException e) {
             throw new UnknownException(e);
@@ -163,7 +171,7 @@ public class PersonGatewayAPI implements PersonGateway{
     }
 
 
-    private static String executePutRequest(String url, String token, String personFirstName, String personLastName, String personDateOfBirth) {
+    private static String executePutRequest(String url, String token, String personFirstName, String personLastName, String personDateOfBirth, Instant lastModified) {
         CloseableHttpClient httpclient = null;
         CloseableHttpResponse response = null;
 
@@ -178,6 +186,8 @@ public class PersonGatewayAPI implements PersonGateway{
             formData.put("firstName", personFirstName);
             formData.put("lastName", personLastName);
             formData.put("dateOfBirth", personDateOfBirth);
+            formData.put("lastModified", lastModified);
+
             String formDataString = formData.toString();
 
             StringEntity reqEntity = new StringEntity(formDataString);
@@ -194,6 +204,9 @@ public class PersonGatewayAPI implements PersonGateway{
                     return getStringFromResponse(response);
                 case 401:
                     throw new UnauthorizedException(response.getStatusLine().getReasonPhrase());
+//                case 409:
+//                    Alerts.infoAlert("Update Error", "Another user has just made a change to this record");
+//
                 default:
                     throw new UnknownException(response.getStatusLine().getReasonPhrase());
             }

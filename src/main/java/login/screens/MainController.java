@@ -9,10 +9,11 @@ import javafx.scene.layout.BorderPane;
 import login.gateway.PersonGatewayAPI;
 import login.gateway.Session;
 import mvc.model.AuditTrail;
+import mvc.model.FetchResults;
 import mvc.model.Person;
+import mvc.screens.MyController;
 import mvc.screens.PersonDetailController;
 import mvc.screens.PersonListController;
-import mvc.screens.MyController;
 import mvc.screens.ScreenType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -34,6 +35,8 @@ public class MainController implements Initializable {
 
     private AuditTrail auditTrail;
 
+    private FetchResults fetchResults;
+
     @FXML
     private BorderPane rootPane;
 
@@ -47,11 +50,28 @@ public class MainController implements Initializable {
 
         LOGGER.info(session);
 
-        switch (screenType) {
+        switch(screenType) {
             case PERSONLIST:
                 viewFileName = "/views/mvc/person_list.fxml";
-                ArrayList<Person> people = (ArrayList<Person>) personGateway.fetchPeople();
-                controller = new PersonListController(people);
+                int page = 0;
+                String lastName = "";
+                if(args.length > 0)
+                {
+                    page = (int)args[0];
+                }
+                if(args.length > 1)
+                {
+                    lastName = (String)args[1];
+                    if(lastName == null)
+                    {
+                        lastName = "";
+                    }
+                }
+
+                ArrayList<Person> people = null;
+                fetchResults = personGateway.fetchPeople(page, lastName);
+                controller = new PersonListController(fetchResults, lastName);
+
                 break;
             case PERSONDETAIL:
                 viewFileName = "/views/mvc/person_detail.fxml";
@@ -75,6 +95,7 @@ public class MainController implements Initializable {
                 LOGGER.error("unknown screen type in switchView: " + screenType);
                 return;
         }
+
         FXMLLoader loader = new FXMLLoader(this.getClass().getResource(viewFileName));
         loader.setController(controller);
         Parent rootNode = null;
@@ -125,5 +146,14 @@ public class MainController implements Initializable {
     public void setAuditTrail(AuditTrail auditTrail) {
         this.auditTrail = auditTrail;
     }
+
+    public FetchResults getFetchResults() {
+        return fetchResults;
+    }
+
+    public void setFetchResults(FetchResults fetchResults) {
+        this.fetchResults = fetchResults;
+    }
+
 }
 

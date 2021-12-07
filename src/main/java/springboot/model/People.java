@@ -1,6 +1,7 @@
 package springboot.model;
 
 import javax.persistence.*;
+import java.time.Instant;
 
 
 @Entity
@@ -21,6 +22,9 @@ public class People {
     @Column(name = "dob", nullable = false, length = 100)
     private String dateOfBirth;
 
+    @Column(name = "last_modified", nullable = false, updatable = false, insertable = false)
+    private Instant lastModified;
+
 
     @Override
     public String toString() {
@@ -34,19 +38,22 @@ public class People {
     public String getFirstName() {
         return firstName;
     }
+    public void setFirstName(String firstName) {this.firstName = firstName;}
+
     public String getLastName() {
         return lastName;
     }
-    public String getDateOfBirth(){
-        return dateOfBirth;
-    }
-    public void setFirstName(String firstName) {this.firstName = firstName;}
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public String getDateOfBirth(){
+        return dateOfBirth;
     }
     public void setDateOfBirth(String dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
+
     public Integer getId() {
         return id;
     }
@@ -54,4 +61,10 @@ public class People {
         this.id = id;
     }
 
+    public Instant getLastModified() {
+        return lastModified;
+    }
+    public void setLastModified(Instant lastModified) {
+        this.lastModified = lastModified;
+    }
 }

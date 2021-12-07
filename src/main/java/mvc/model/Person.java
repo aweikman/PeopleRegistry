@@ -63,25 +63,34 @@ package mvc.model;
 
 import org.json.JSONObject;
 
+import java.time.Instant;
+
 public class Person {
 
     private int id;
     private String personFirstName;
     private String personLastName;
     private String dateOfBirth;
+    private Instant lastModified;
 
-    public Person(String personFirstName, String personLastName, String dateOfBirth, int id) {
+    public Person(String personFirstName, String personLastName, String dateOfBirth, int id, String lastModified) {
 
         this.id = id;
         this.personFirstName = personFirstName;
         this.personLastName = personLastName;
         this.dateOfBirth = dateOfBirth;
+        this.lastModified = Instant.parse(lastModified);
+    }
+
+    public Person() {
+
+
     }
 
     public static Person fromJSONObject(JSONObject json) {
         try {
             Person person = new Person(json.getString("firstName"),
-                    json.getString("lastName"), json.getString("dateOfBirth"), json.getInt("id"));
+                    json.getString("lastName"), json.getString("dateOfBirth"), json.getInt("id"), json.getString("lastModified"));
             return person;
         } catch(Exception e) {
             throw new IllegalArgumentException("Unable to parse person from provided json: " + json.toString());
@@ -116,5 +125,12 @@ public class Person {
 
     public String getDateOfBirth() { return dateOfBirth; }
     public void setDateOfBirth(String dateOfBirth) { this.dateOfBirth = dateOfBirth; }
+
+    public Instant getLastModified() {
+        return lastModified;
+    }
+    public void setLastModified(Instant lastModified) {
+        this.lastModified = lastModified;
+    }
 }
 

@@ -1,8 +1,8 @@
 package mvc.screens;
 
+import com.mysql.cj.jdbc.MysqlDataSource;
 import gateway.PersonGateway;
 import javafx.Alerts;
-import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -17,31 +17,18 @@ import login.gateway.Session;
 import login.screens.MainController;
 import mvc.model.AuditTrail;
 import mvc.model.Person;
-import myexceptions.UnauthorizedException;
-import myexceptions.UnknownException;
-import org.apache.http.HttpEntity;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.json.JSONObject;
 
-import java.io.IOException;
+import javax.sql.DataSource;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
+import java.sql.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+import java.util.Random;
 import java.util.ResourceBundle;
 
 public class PersonDetailController implements Initializable, MyController {
@@ -53,6 +40,10 @@ public class PersonDetailController implements Initializable, MyController {
     private ObservableList<AuditTrail> auditTrail;
 
     private PersonGateway personGateway;
+
+    private static final Random roller = new Random();
+
+    private static Connection conn = null;
 
     public PersonDetailController(Person person, ArrayList<AuditTrail> auditTrail) {
         this.person = person;
@@ -94,17 +85,14 @@ public class PersonDetailController implements Initializable, MyController {
     @FXML
     private TableView table;
 
-
-
     @FXML
     void cancel(ActionEvent event) {
         LOGGER.info("CANCEL");
-        MainController.getInstance().switchView(ScreenType.PERSONLIST);
+        MainController.getInstance().switchView(ScreenType.PERSONLIST, 0, "");
     }
 
     @FXML
     void save(ActionEvent event) {
-
         // code for checking if entered date is after current date
         Date date = null;
         SimpleDateFormat sdf = null;
@@ -150,14 +138,68 @@ public class PersonDetailController implements Initializable, MyController {
             MainController.getInstance().switchView(ScreenType.PERSONLIST);
         }
         else {
-            LOGGER.info("UPDATING");
-            person.setDateOfBirth(personDateOfBirth.getText());
-            person.setPersonFirstName(personFirstName.getText());
-            person.setPersonLastName(personLastName.getText());
+            PreparedStatement stmt = null;
+            ResultSet rs = null;
 
-            PersonGatewayAPI.updatePerson(person);
-            // transition to personlist
-            MainController.getInstance().switchView(ScreenType.PERSONLIST);
+            try {
+                DataSource ds = getDataSource();
+                conn = ds.getConnection();
+
+                System.out.println("grabbing timestamp...");
+                stmt = conn.prepareStatement("select last_modified from people where id = 1");
+                rs = stmt.executeQuery();
+                rs.next();
+                Timestamp ts1 = rs.getTimestamp("last_modified");
+
+                System.out.println("checking timestamps...");
+
+                Timestamp ts2 = Timestamp.from(person.getLastModified());
+
+                //System.out.println("Timestamp 1 " + ts1 + "Timestamp 2 " + ts2);
+
+                if(!ts2.equals(ts1)) {
+                    Alerts.infoAlert("Update Error", "Another user has just made a change to this record");
+                    return;
+                } else {
+                    LOGGER.info("UPDATING");
+                    person.setDateOfBirth(personDateOfBirth.getText());
+                    person.setPersonFirstName(personFirstName.getText());
+                    person.setPersonLastName(personLastName.getText());
+
+                    PersonGatewayAPI.updatePerson(person);
+                    // transition to personlist
+                    MainController.getInstance().switchView(ScreenType.PERSONLIST);
+                }
+
+                System.out.println("done.");
+
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } finally {
+                try {
+                    if(rs != null)
+                        rs.close();
+                    if(stmt != null)
+                        stmt.close();
+                    conn.close();
+                } catch(Exception e) {
+
+                }
+            }
+        }
+    }
+
+    public static DataSource getDataSource() {
+        try {
+            MysqlDataSource mysqlDS = new MysqlDataSource();
+            mysqlDS.setURL("jdbc:mysql://cs3743.fulgentcorp.com:3306/cs4743_vrn320?serverTimezone=UTC#");
+            mysqlDS.setUser("vrn320");
+            mysqlDS.setPassword("KLkdnbefN2ATdpqyMtVo");
+            return mysqlDS;
+        } catch(RuntimeException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 
@@ -167,9 +209,9 @@ public class PersonDetailController implements Initializable, MyController {
         personId.setText("" +person.getId());
         personFirstName.setText(person.getPersonFirstName());
         personLastName.setText(person.getPersonLastName());
-        personDateOfBirth.setText(String.valueOf(person.getDateOfBirth()));
+        personDateOfBirth.setText("01-01-2000");
 
-        // this is where we connect the model data of AugditTrail to gui tableview components
+        // this is where we connect the model data of AuditTrail to gui tableview components
         if(person.getId() != 0 ) {
             changeMsg.setCellValueFactory(new PropertyValueFactory<AuditTrail, String>("changeMsg"));
             changedBy.setCellValueFactory(new PropertyValueFactory<AuditTrail, Integer>("changedBy"));
@@ -178,6 +220,8 @@ public class PersonDetailController implements Initializable, MyController {
             table.setItems(auditTrail);
         }
     }
+
+
 
 
 }

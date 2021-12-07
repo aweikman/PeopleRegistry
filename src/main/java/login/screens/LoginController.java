@@ -6,15 +6,14 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import myexceptions.UnauthorizedException;
-import myexceptions.UnknownException;
 import login.gateway.AuthenticationGateway;
 import login.gateway.Session;
 import mvc.screens.MyController;
 import mvc.screens.ScreenType;
+import myexceptions.UnauthorizedException;
+import myexceptions.UnknownException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import pw_hash.HashUtils;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -50,7 +49,8 @@ public class LoginController implements Initializable, MyController {
         }
         // if ok. transition to person list
         MainController.getInstance().setSession(session);
-        MainController.getInstance().switchView(ScreenType.PERSONLIST);
+        String lastName = "";
+        MainController.getInstance().switchView(ScreenType.PERSONLIST, 0, lastName);
     }
 
     @Override
